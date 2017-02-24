@@ -7,7 +7,7 @@
 
 
 
-    // gloabl params
+    // global params
     divisions = 20;
     foldHeight = 4;
     height = 1.0;
@@ -180,14 +180,9 @@
     function loadAllModels()
     {
         envModelsGroup = new THREE.Group();
-
-        // console.log("log from loadAllModels() in pavilion.js");
-        loadModel(humansModelFileName, 0x000000, false);
-        loadModel(cityModelFileName, 0xaaaaaa, false);
-        loadModel(shadesModelFileName, 0x444444, false);
-        loadModel(treesModelFileName, 0x444444, true);
-        loadModel(operaHouseModelFileName, 0xaaaaaa, false);
-
+        for(i=0; i<bgModels.length; i++) {
+            loadModel(bgModels[i], bgModelColor[i], bgModelAlpha[i]);
+        }
         scene.add(envModelsGroup);
     }
 
@@ -473,8 +468,9 @@
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         // make the control and camera look at the centre of the origami model
-        controls.target.set( width/2, breadth/2, 1 );
-        camera.lookAt(new THREE.Vector3( width/2, breadth/2, 1 ));
+        camera.position.set( 75, -28, 12 );
+        controls.target.set( width/2, breadth/2, 25 );
+        camera.lookAt(new THREE.Vector3( width/2, breadth/2, 25 ));
 
         function render() {
 

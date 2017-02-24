@@ -1,19 +1,16 @@
 
 
 
-
-var humansModelFileName;
-var cityModelFileName;
-var shadesModelFileName;
-var treesModelFileName;
-var operaHouseModelFileName;
+var bgModels = [];
+var bgModelColor = [];
+var bgModelAlpha = [];
 
 
-function setupModelFileNames(fN1, fN2, fN3, fN4, fN5)
+function setupBackgroundModelFiles(configArray)
 {
-	humansModelFileName = fN1;
-	cityModelFileName = fN2;
-	shadesModelFileName = fN3;
-	treesModelFileName = fN4;
-	operaHouseModelFileName = fN5;
+	bgModels.push(configArray[0]);
+	bgModelColor.push(configArray[1]);
+	bgModelAlpha.push(configArray[2]);
 }
+
+

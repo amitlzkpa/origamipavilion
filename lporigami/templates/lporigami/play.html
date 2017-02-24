@@ -29,12 +29,11 @@
 
   <script src="{% static 'js/modelSetup.js' %}"></script>
   <script type="text/javascript">
-
-    setupModelFileNames("{% static 'files/humans.obj' %}",
-                        "{% static 'files/city.obj' %}",
-                        "{% static 'files/shades.obj' %}",
-                        "{% static 'files/trees.obj' %}",
-                        "{% static 'files/opera-house.obj' %}");
+    setupBackgroundModelFiles(["{% static 'files/humans.obj' %}",        0x000000, false]);
+    setupBackgroundModelFiles(["{% static 'files/city.obj' %}",          0xaaaaaa, false]);
+    setupBackgroundModelFiles(["{% static 'files/shades.obj' %}",        0x444444, false]);
+    setupBackgroundModelFiles(["{% static 'files/trees.obj' %}",         0x444444, true]);
+    setupBackgroundModelFiles(["{% static 'files/opera-house.obj' %}",   0xaaaaaa, false]);
   </script>
 </head>
 
