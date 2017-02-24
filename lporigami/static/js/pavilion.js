@@ -181,6 +181,7 @@
     {
         envModelsGroup = new THREE.Group();
 
+        // console.log("log from loadAllModels() in pavilion.js");
         loadModel(humansModelFileName, 0x000000, false);
         loadModel(cityModelFileName, 0xaaaaaa, false);
         loadModel(shadesModelFileName, 0x444444, false);
@@ -470,6 +471,10 @@
 
     function renderScene(){
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // make the control and camera look at the centre of the origami model
+        controls.target.set( width/2, breadth/2, 1 );
+        camera.lookAt(new THREE.Vector3( width/2, breadth/2, 1 ));
 
         function render() {
 
