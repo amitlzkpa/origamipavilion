@@ -1,0 +1,9 @@
+[submodule "lporigami/static/js/ThreeJS"]
+	path = lporigami/static/js/ThreeJS
+	url = https://github.com/mrdoob/three.js.git
+[submodule "lporigami/static/js/FileSaver"]
+	path = lporigami/static/js/FileSaver
+	url = https://github.com/eligrey/FileSaver.js.git
+[submodule "lporigami/static/js/Verb"]
+	path = lporigami/static/js/Verb
+	url = https://github.com/pboyer/verb.git
