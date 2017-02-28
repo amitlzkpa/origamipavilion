@@ -19,6 +19,17 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     }
 
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+
+
+    // meant to be overwritten
+    physicsUpdate;
+
     
     initScene = function() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -27,13 +38,15 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
 
         scene = new Physijs.Scene;
 
+        scene.addEventListener( 'update', physicsUpdate);
+
         camera = new THREE.PerspectiveCamera(
             35,
             window.innerWidth / window.innerHeight,
             1,
             10000
         );
-        camera.position.set( 60, 50, 60 );
+        camera.position.set( -60, 50, 60 );
         camera.lookAt( scene.position );
         scene.add( camera );
 
@@ -43,6 +56,7 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
 
         mouse = new THREE.Vector2();
         window.addEventListener( 'mousemove', onMouseMove, false );
+        window.addEventListener( 'resize', onWindowResize, false );
     };
 
 
