@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 
-
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
   <script src="{% static 'js/Verb/build/js/verb.js' %}"></script>
   <script src="{% static 'js/ThreeJS/build/three.min.js' %}"></script>
   <script src="{% static 'js/Physijs/physi.js' %}"></script>
@@ -118,36 +119,29 @@
 
   <div id="viewport"></div>
 
-
-
-
-
-
-
   <div id="viewer" class="col s12 m12 l12">
     <div id="datGUI"></div>
   </div>
 
 
-  <script>
-    boilerplatePhysiJS(document,
-                      "{% static 'js/Physijs/physijs_worker.js' %}",
-                      "{% static 'js/Physijs/examples/js/ammo.js' %}");
-    pavilionRun();
-  </script>
+
 
 
 
 
   <script type="text/javascript">
-      $(document).ready(function(){
-        $('.modal-trigger').leanModal();
-      });
-  </script>
+    boilerplatePhysiJS(document,
+                      "{% static 'js/Physijs/physijs_worker.js' %}",
+                      "{% static 'js/Physijs/examples/js/ammo.js' %}");
+    pavilionRun();
 
 
 
-  <script>
+
+
+    $(document).ready(function(){
+      $('.modal-trigger').leanModal();
+    });
   </script>
 
 
