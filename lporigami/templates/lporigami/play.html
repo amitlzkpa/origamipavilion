@@ -8,7 +8,6 @@
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
@@ -16,19 +15,22 @@
 
   <script src="{% static 'js/Verb/build/js/verb.js' %}"></script>
   <script src="{% static 'js/ThreeJS/build/three.min.js' %}"></script>
+  <script src="{% static 'js/Physijs/physi.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/verbToThreeConversion.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/codemirror.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/javascript.js' %}"></script>
-  <script src="{% static 'js/mySceneSetup.js' %}"></script>
-  <script src="{% static 'js/OrbitControls.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/libs/dat.gui.min.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/loaders/OBJLoader.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/exporters/OBJExporter.js' %}"></script>
   <script src="{% static 'js/FileSaver/FileSaver.min.js' %}"></script>
+  <script src="{% static 'js/OrbitControls.js' %}"></script>
+  <script src="{% static 'js/physiJSSceneSetup.js' %}"></script>
+  <script src="{% static 'js/pavilion.js' %}"></script>
 
 
   <script src="{% static 'js/modelSetup.js' %}"></script>
   <script type="text/javascript">
+    //@TO-DO: keep/remove this
     setupBackgroundModelFiles(["{% static 'files/humans.obj' %}",        0x000000, false]);
     setupBackgroundModelFiles(["{% static 'files/city.obj' %}",          0xaaaaaa, false]);
     setupBackgroundModelFiles(["{% static 'files/shades.obj' %}",        0x444444, false]);
@@ -114,6 +116,7 @@
 
 
 
+  <div id="viewport"></div>
 
 
 
@@ -126,16 +129,27 @@
   </div>
 
 
+  <script>
+    boilerplatePhysiJS(document,
+                      "{% static 'js/Physijs/physijs_worker.js' %}",
+                      "{% static 'js/Physijs/examples/js/ammo.js' %}");
+    pavilionRun();
+  </script>
 
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
-  <script src="{% static 'js/pavilion.js' %}"></script>
+
+
   <script type="text/javascript">
       $(document).ready(function(){
         $('.modal-trigger').leanModal();
       });
   </script>
+
+
+
+  <script>
+  </script>
+
+
   </body>
 </html>

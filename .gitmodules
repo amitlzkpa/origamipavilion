@@ -10,3 +10,6 @@
 [submodule "lporigami/static/js/Physijs"]
 	path = lporigami/static/js/Physijs
 	url = https://github.com/chandlerprall/Physijs.git
+[submodule "lporigami/static/js/ThreeJSBoilerplate"]
+	path = lporigami/static/js/ThreeJSBoilerplate
+	url = https://github.com/jeromeetienne/threejsboilerplate.git
