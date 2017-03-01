@@ -29,6 +29,7 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
 
     // meant to be overwritten
     physicsUpdate;
+    frameUpdate;
 
     
     initScene = function() {
@@ -38,7 +39,7 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
 
         scene = new Physijs.Scene;
 
-        scene.addEventListener( 'update', physicsUpdate);
+        scene.addEventListener( 'update', physicsUpdate );
 
         camera = new THREE.PerspectiveCamera(
             35,
@@ -70,6 +71,7 @@ function boilerplatePhysiJS(document, workerPath, ammoPath) {
             scene.simulate(); // run physics
             renderer.render( scene, camera );
             requestAnimationFrame( render );
+            frameUpdate();
         }
         render();
     }

@@ -7,6 +7,7 @@
 
 
 
+var firstFrame = true;
 var debug = true;
 // var debug = false;
 
@@ -20,6 +21,11 @@ var debug = true;
 // use this for any physics stuff; called after every physics simulation iteration;
 // physics iteration is diff from frame rendering iteration
 physicsUpdate = function() {
+}
+
+
+frameUpdate = function() {
+  if (debug) redrawConstraintLines();
 }
 
 
@@ -92,7 +98,7 @@ function ControlPoint(row, col, xSpc, zSpc) {
   this.row = row;
   this.col = col;
   this.phyMesh.position.x = row * xSpc;
-  this.phyMesh.position.y = (col % 2==0)?0.1:0.2;
+  this.phyMesh.position.y = (col % 2==0)?0.5:1;
   this.phyMesh.position.z = col * zSpc;
 }
 
@@ -116,7 +122,7 @@ ControlPoint.prototype.getPosition = function() {
 
 
 ControlPoint.prototype.move = function(amt) {
-  this.phyMesh.setLinearVelocity(new THREE.Vector3(0, 0, -10));
+  this.phyMesh.setLinearVelocity(new THREE.Vector3(0, 0, amt));
 }
 
 
@@ -145,31 +151,67 @@ function addPointsArray(xCount, zCount, xSpacing, zSpacing) {
 
 
 
-function attachPoints(xCount, zCount) {
-  var debugConstraints = false;
+var constraintLinesGroup;
 
+
+
+function removeConstraintLinesGroup() {
+  scene.remove(constraintLinesGroup);
+}
+
+
+
+function addConstraintLinesGroup() {
+  constraintLinesGroup = new THREE.Group();
+  for (var col=0; col<pointsArray.length-1; col++) {
+    for (var row=0; row<pointsArray[col].length; row++) {
+      constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
+                                       pointsArray[col+1][row].getPosition(),
+                                       0x00ff00));
+    }
+  }
+  for (var col=0; col<pointsArray.length; col++) {
+    for (var row=0; row<pointsArray[col].length-1; row++) {
+      constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
+                                       pointsArray[col][row+1].getPosition(),
+                                       0x0000ff));
+    }
+  }
+  scene.add(constraintLinesGroup);
+}
+
+
+
+function redrawConstraintLines() {
+  if (firstFrame) {
+    addConstraintLinesGroup();
+    firstFrame = false;
+    return;
+  }
+  removeConstraintLinesGroup();
+  addConstraintLinesGroup();
+  
+}
+
+
+
+function attachPoints(xCount, zCount) {
   for (var col=0; col<zCount-1; col++) {
     for (var row=0; row<xCount; row++) {
       scene.addConstraint(getConstraintObject(pointsArray[col][row], pointsArray[col+1][row]));
-      if (debugConstraints) scene.add(getLine(pointsArray[col][row].getPosition(),
-                                   pointsArray[col+1][row].getPosition(),
-                                   0x00ff00));
     }
   }
 
   for (var col=0; col<zCount; col++) {
     for (var row=0; row<xCount-1; row++) {
       scene.addConstraint(getConstraintObject(pointsArray[col][row], pointsArray[col][row+1]));
-      if (debugConstraints) scene.add(getLine(pointsArray[col][row].getPosition(),
-                                   pointsArray[col][row+1].getPosition(),
-                                   0x0000ff));
     }
   }
 }
 
 
 
-function getConstraintObject(cp1) {
+function getConstraintObjectSingle(cp1) {
   var pt1 = cp1.getPhyMesh();
   var constraint = new Physijs.PointConstraint(
     pt1,
@@ -193,21 +235,50 @@ function getConstraintObject(cp1, cp2) {
 
 
 
-function moveLastRow() {
+function moveLastRow(amt) {
   for(var i=0; i<pointsArray[pointsArray.length-1].length; i++) {
-    pointsArray[pointsArray.length-1][i].move();
+    pointsArray[pointsArray.length-1][i].move(amt);
   }
 }
 
 
 
-// @CONTINUE HERE
 function pinDownFirstRow() {
   for(var i=0; i<pointsArray[0].length; i++) {
-    scene.addConstraint(getConstraintObject(pointsArray[0][i]));
+    scene.addConstraint(getConstraintObjectSingle(pointsArray[0][i]));
   }
 }
 
+
+
+function moveAltPoint(amt) {
+  for(var i=2; i<pointsArray.length; i++) {
+    if (i % 2 == 0) {
+      for (var j=0; j<pointsArray[i].length; j++) {
+        pointsArray[i][j].getPhyMesh().setLinearVelocity(new THREE.Vector3(0, 0, amt));
+      }
+    }
+  }
+}
+
+
+
+// function moveBullDozer(amt) {
+//   bullDozer.setLinearVelocity(new THREE.Vector3(0, 0, amt));
+// }
+
+
+
+// var bullDozer;
+
+
+// function addBullDozer() {
+//   bullDozer = getBox(15, 2, 0.1, 10, 0xffff00);
+//   bullDozer.position.x = 6;
+//   bullDozer.position.y = 1;
+//   bullDozer.position.z = 12.6;
+//   scene.add(bullDozer);
+// }
 
 
 
@@ -218,7 +289,27 @@ function pavilionRun(){
       switch ( event.keyCode ) {
         // Q
         case 81: {
-          moveLastRow();
+          moveLastRow(-10);
+          break;
+        }
+        // W
+        case 87: {
+          moveLastRow(10);
+          break;
+        }
+        // D
+        case 68: {
+          // moveBullDozer(-10);
+          break;
+        }
+        // F
+        case 70: {
+          moveAltPoint(-10);
+          break;
+        }
+        // G
+        case 71: {
+          moveAltPoint(10);
           break;
         }
     }
@@ -230,6 +321,7 @@ function pavilionRun(){
   var zSpacing = 3;
   if(debug) addOrigin();
   addGroundPlane();
+  // addBullDozer();
   addPointsArray(xCount, zCount, xSpacing, zSpacing);
   attachPoints(xCount, zCount);
   pinDownFirstRow();
