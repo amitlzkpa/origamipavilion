@@ -24,6 +24,8 @@ physicsUpdate = function() {
 }
 
 
+// called after every frame;
+// physics iteration is diff from frame rendering iteration
 frameUpdate = function() {
   if (debug) redrawConstraintLines();
 }
@@ -151,6 +153,12 @@ function addPointsArray(xCount, zCount, xSpacing, zSpacing) {
 
 
 
+
+//-----------------------------------------------------------------------------
+
+
+
+
 var constraintLinesGroup;
 
 
@@ -163,18 +171,18 @@ function removeConstraintLinesGroup() {
 
 function addConstraintLinesGroup() {
   constraintLinesGroup = new THREE.Group();
-  for (var col=0; col<pointsArray.length-1; col++) {
-    for (var row=0; row<pointsArray[col].length; row++) {
-      constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
-                                       pointsArray[col+1][row].getPosition(),
-                                       0x00ff00));
-    }
-  }
   for (var col=0; col<pointsArray.length; col++) {
-    for (var row=0; row<pointsArray[col].length-1; row++) {
-      constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
-                                       pointsArray[col][row+1].getPosition(),
-                                       0x0000ff));
+    for (var row=0; row<pointsArray[col].length; row++) {
+      if (col+1 < pointsArray.length) {
+        constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
+                                         pointsArray[col+1][row].getPosition(),
+                                         0x00ff00));
+      }
+      if (row+1 < pointsArray[col].length) {
+        constraintLinesGroup.add(getLine(pointsArray[col][row].getPosition(),
+                                         pointsArray[col][row+1].getPosition(),
+                                         0x0000ff));
+      }
     }
   }
   scene.add(constraintLinesGroup);
@@ -192,6 +200,12 @@ function redrawConstraintLines() {
   addConstraintLinesGroup();
   
 }
+
+
+
+
+//-----------------------------------------------------------------------------
+
 
 
 
@@ -232,6 +246,12 @@ function getConstraintObject(cp1, cp2) {
     );
   return constraint;
 }
+
+
+
+
+//-----------------------------------------------------------------------------
+
 
 
 
@@ -279,6 +299,11 @@ function moveAltPoint(amt) {
 //   bullDozer.position.z = 12.6;
 //   scene.add(bullDozer);
 // }
+
+
+
+
+//-----------------------------------------------------------------------------
 
 
 
