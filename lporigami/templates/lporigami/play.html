@@ -8,27 +8,29 @@
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 
-
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
   <script src="{% static 'js/Verb/build/js/verb.js' %}"></script>
   <script src="{% static 'js/ThreeJS/build/three.min.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/verbToThreeConversion.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/codemirror.js' %}"></script>
   <script src="{% static 'js/Verb/examples/js/javascript.js' %}"></script>
-  <script src="{% static 'js/mySceneSetup.js' %}"></script>
-  <script src="{% static 'js/OrbitControls.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/libs/dat.gui.min.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/loaders/OBJLoader.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/exporters/OBJExporter.js' %}"></script>
   <script src="{% static 'js/FileSaver/FileSaver.min.js' %}"></script>
+  <script src="{% static 'js/OrbitControls.js' %}"></script>
+  <script src="{% static 'js/mySceneSetup.js' %}"></script>
+  <script src="{% static 'js/pavilion.js' %}"></script>
 
 
   <script src="{% static 'js/modelSetup.js' %}"></script>
   <script type="text/javascript">
+    //@TO-DO: keep/remove this
     setupBackgroundModelFiles(["{% static 'files/humans.obj' %}",        0x000000, false]);
     setupBackgroundModelFiles(["{% static 'files/city.obj' %}",          0xaaaaaa, false]);
     setupBackgroundModelFiles(["{% static 'files/shades.obj' %}",        0x444444, false]);
@@ -97,7 +99,7 @@
             <span id="PLUS-text">PLUS</span>
           </a>
           <a href="#!" id="origami-text" class="brand-logo center">ORIGAMI</a>
-          
+
           <ul class="right hide-on-med-and-down">
             <li><a href="#credits" class="waves-effect waves-light btn-flat grey-text modal-trigger">CREDITS</a></li>
             <li><a href="#" onclick="javascript:downloadModel()" class="waves-effect waves-light btn-flat grey-text">Download</a></li>
@@ -114,12 +116,7 @@
 
 
 
-
-
-
-
-
-
+  <div id="viewport"></div>
 
   <div id="viewer" class="col s12 m12 l12">
     <div id="datGUI"></div>
@@ -127,15 +124,23 @@
 
 
 
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
-  <script src="{% static 'js/pavilion.js' %}"></script>
+
+
+
   <script type="text/javascript">
-      $(document).ready(function(){
-        $('.modal-trigger').leanModal();
-      });
+    initScene();
+    pavilionRun();
+
+
+
+
+
+    $(document).ready(function(){
+      $('.modal-trigger').leanModal();
+    });
   </script>
-  </body>
+
+
+</body>
 </html>

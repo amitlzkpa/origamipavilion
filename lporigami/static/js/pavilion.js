@@ -1,532 +1,445 @@
 
 
 
-    debug = false;
-    // debug = true;
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+var debug = true;
+// var debug = false;
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+function calcInterp(valA, valB, off) {
+    return valA + ((valB-valA) * off);
+}
+
+
+function getIntermediateVector3(pt1, pt2, offset) {
+    return new THREE.Vector3(calcInterp(pt1.x, pt2.x, offset),
+                             calcInterp(pt1.y, pt2.y, offset),
+                             calcInterp(pt1.z, pt2.z, offset));
+}
+
+
+function getBisectionVector3(dist1, dist2, pt1, pt2) {
+    return new THREE.Vector3(calcInterp(pt1.x, pt2.x, offset),
+                             calcInterp(pt1.y, pt2.y, offset),
+                             calcInterp(pt1.z, pt2.z, offset));
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+function getLine(start, end, lineColor) {
+    var material = new THREE.LineBasicMaterial({
+        color: lineColor
+    });
+    var geometry = new THREE.Geometry();
+    geometry.vertices.push(start, end);
+    var line = new THREE.Line( geometry, material );
+    return line;
+}
+
+
+function getSphereMesh(radius, wSegs, hSegs, color) {
+    var geometry = new THREE.SphereGeometry(radius, wSegs, hSegs);
+    var material = new THREE.MeshBasicMaterial({color: color});
+    var sphere = new THREE.Mesh(geometry, material);
+    return sphere;
+}
+
+
+function getBoxMesh(width, height, depth, color) {
+    var geometry = new THREE.BoxGeometry(width, height, depth);
+    var material = new THREE.MeshBasicMaterial( {color: color} );
+    var cube = new THREE.Mesh( geometry, material );
+    return cube;
+}
+
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 
 
 
-    // global params
-    divisions = 20;
-    foldHeight = 4;
-    height = 1.0;
-    eaveHeightFront = 30;
-    eaveHeightBack = 15;
-    width = 90;
-    breadth = 90;
-    pinch = 30;
-    analyzeSurface = false;
-    seeEdges = true;
-    panelColor = 0xff0000;
-    var origamiGroup;
-    var envModelsGroup;
-    var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 4});
-    var panelMaterial = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: panelColor, specular: 0x00ff00, shininess: 20, shading: THREE.FlatShading } );
-    var activePanelMaterial;
-
-
-    var guiControls = new function() {
-        this.divisions = divisions;
-        this.foldHeight = foldHeight;
-        this.height = height;
-        this.eaveHeightFront = eaveHeightFront;
-        this.eaveHeightBack = eaveHeightBack;
-        this.width = width;
-        this.breadth = breadth;
-        this.pinch = pinch;
-        this.analyzeSurface = analyzeSurface;
-        this.seeEdges = seeEdges;
-    }
+function ControlPoint(row, col) {
+    this.mesh = getBoxMesh(0.5, 0.5, 0.5, 0xff0000);
+    this.row = row;
+    this.col = col;
+    this.mesh.position.x = row * xSpacing;
+    this.mesh.position.y = 0;
+    this.mesh.position.z = col * zSpacing;
+}
 
 
 
-    function setupControllers()
-    {
-        var datGUI = new dat.GUI({autoPlace: false});
-        // datGUI.domElement.id = 'datGUI';
-        var customContainer = document.getElementById('datGUI');
-        customContainer.appendChild(datGUI.domElement);
-        var widthController = datGUI.add(guiControls, 'width', 70, 120);
-        var heightController = datGUI.add(guiControls, 'height', 1, 1.5).step(0.05);
-        var breadthController = datGUI.add(guiControls, 'breadth', 70, 120);
-        var pinchController = datGUI.add(guiControls, 'pinch', 0, 30);
-        var eaveHeightFrontController = datGUI.add(guiControls, 'eaveHeightFront', 0, 60);
-        var eaveHeightBackController = datGUI.add(guiControls, 'eaveHeightBack', 0, 60);
-        var foldHeightController = datGUI.add(guiControls, 'foldHeight', 0, 10).step(1);
-        var divisionsController = datGUI.add(guiControls, 'divisions', 4, 40);
-        var analyzeSurface = datGUI.add(guiControls, 'analyzeSurface');
-        var seeEdges = datGUI.add(guiControls, 'seeEdges');
+ControlPoint.prototype.getMesh = function() {
+    return this.mesh;
+}
 
 
-        for (var i in datGUI.__controllers)
-        {
-            datGUI.__controllers[i].onFinishChange(function() {
-                updateParameters();
-                updateOrigamiModel();
-            });
+
+//---------------------------------------------------------
+
+
+
+function FoldPoint(attachPt1, attachPt2, offset) {
+    this.pt1 = attachPt1;
+    this.pt2 = attachPt2;
+    var intPos = getIntermediateVector3(this.pt1.getMesh().position, this.pt2.getMesh().position, offset);
+    this.distPt1 = this.pt1.getMesh().position.distanceTo(intPos);
+    this.distPt2 = this.pt2.getMesh().position.distanceTo(intPos);
+    this.mesh = getSphereMesh(0.2, 32, 32, 0xffff00);
+    this.mesh.position.set(intPos.x, intPos.y, intPos.z);
+}
+
+
+FoldPoint.prototype.getMesh = function() {
+    return this.mesh;
+}
+
+
+FoldPoint.prototype.getDistance1 = function() {
+    return this.distPt1;
+}
+
+
+FoldPoint.prototype.getDistance2 = function() {
+    return this.distPt2;
+}
+
+
+FoldPoint.prototype.getAttachedObj1 = function() {
+    return this.pt1;
+}
+
+
+FoldPoint.prototype.getAttachedObj2 = function() {
+    return this.pt2;
+}
+
+
+FoldPoint.prototype.reposition = function() {
+    var intPos = getBisectionVector3(this.getDistance1(),
+                                     this.getDistance2(),
+                                     this.getAttachedObj1().getMesh().position,
+                                     this.getAttachedObj2().getMesh().position);
+    this.getMesh().position.x = intPos.x;
+    this.getMesh().position.y = intPos.y;
+    this.getMesh().position.z = intPos.z;
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+function addOrigin() {
+    var originGroup = new THREE.Group();
+    var redLine = getLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(6, 0, 0), 0xff0000);
+    var greenLine = getLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 4), 0x00ff00);
+    var blueLine = getLine(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 2, 0), 0x0000ff);
+    originGroup.add(redLine);
+    originGroup.add(greenLine);
+    originGroup.add(blueLine);
+    scene.add(originGroup);
+}
+
+
+
+//---------------------------------------------------------
+
+
+
+var debugControlPointsGroup;
+var debugFoldPointsGroup;
+
+
+
+function removeDebugPointsGroup() {
+    scene.remove(debugControlPointsGroup);
+    scene.remove(debugFoldPointsGroup);
+}
+
+
+
+function addDebugPointsGroup() {
+    debugControlPointsGroup = new THREE.Group();
+    for (var col=0; col<controlPointsArray.length; col++) {
+        for (var row=0; row<controlPointsArray[col].length; row++) {
+            debugControlPointsGroup.add(controlPointsArray[col][row].getMesh());
         }
     }
+    scene.add(debugControlPointsGroup);
 
-
-
-    function updateParameters()
-    {
-        divisions = guiControls.divisions;
-        foldHeight = guiControls.foldHeight;
-        height = guiControls.height;
-        eaveHeightFront = guiControls.eaveHeightFront;
-        eaveHeightBack = guiControls.eaveHeightBack;
-        width = guiControls.width;
-        breadth = guiControls.breadth;
-        pinch = guiControls.pinch;
-        analyzeSurface = guiControls.analyzeSurface;
-        seeEdges = guiControls.seeEdges;
-    }
-
-
-
-
-    function init()
-    {
-        // verb.exe.WorkerPool.basePath = "verb-master/build/js/";
-        setupScene();
-        renderer.setClearColor (0xffffff, 1);
-        // make the control and camera look at the centre of the origami model
-        camera.position.set( 75, -28, 12 );
-        camera.lookAt(new THREE.Vector3( width/2, breadth/2, 25 ));
-        loadAllModels();
-        loadOrigamiModel();
-        setupControllers();
-    }
-
-
-
-    function loadOrigamiModel()
-    {
-
-        crv1Pt1 = [0, pinch, 0];
-        crv1Pt2 = [width/2, 0, eaveHeightFront];
-        crv1Pt3 = [width, pinch, 0];
-
-
-        crv2Pt1 = [0, breadth-pinch, 0];
-        crv2Pt2 = [width/2, breadth, eaveHeightBack];
-        crv2Pt3 = [width, breadth-pinch, 0];
-
-
-        baseCrvPts1 = [crv1Pt1, crv1Pt2, crv1Pt3];
-        baseCrvPts2 = [crv2Pt1, crv2Pt2, crv2Pt3];
-
-
-        for (var i=0; i<baseCrvPts1.length; i++)
-        {
-            baseCrvPts1[i][2] *= height;
-            baseCrvPts2[i][2] *= height;
+    debugFoldPointsGroup = new THREE.Group();
+    for (var col=0; col<foldPointsArray.length; col++) {
+        for (var row=0; row<foldPointsArray[col].length; row++) {
+            debugFoldPointsGroup.add(foldPointsArray[col][row].getMesh());
         }
-        
-        
-        var loftedSurface = createLoftedSurface(baseCrvPts1, baseCrvPts2);
-        if (debug) {addMeshToScene( loftedSurface.toThreeGeometry() );}
-        origamiGroup = createOrigamiSurface(loftedSurface, divisions, foldHeight);
-        scene.add(origamiGroup);
     }
+    scene.add(debugFoldPointsGroup);
+}
 
 
 
-
-    function updateOrigamiModel()
-    {
-        scene.remove(origamiGroup);
-        loadOrigamiModel();
-    }
+//---------------------------------------------------------
 
 
 
+var debugLinesGroup;
 
 
-    function loadModel(filename, matColor, isTransparent)
-    {
-        var manager = new THREE.LoadingManager();
-        manager.onProgress = function ( item, loaded, total ) {
-            console.log( item, loaded, total );
-        };
-        var texture = new THREE.Texture();
-        var onProgress = function ( xhr ) {
-            if ( xhr.lengthComputable ) {
-                var percentComplete = xhr.loaded / xhr.total * 100;
-                console.log( Math.round(percentComplete, 2) + '% downloaded' );
+
+function removeDebugLinesGroup() {
+    scene.remove(debugLinesGroup);
+}
+
+
+
+function addDebugLinesGroup() {
+    debugLinesGroup = new THREE.Group();
+    for (var col=0; col<controlPointsArray.length; col++) {
+        for (var row=0; row<controlPointsArray[col].length; row++) {
+            if (col+1 < controlPointsArray.length) {
+                debugLinesGroup.add(getLine(controlPointsArray[col][row].getMesh().position,
+                   controlPointsArray[col+1][row].getMesh().position,
+                   0x00ff00));
             }
-        };
-        var onError = function ( xhr ) {
-        };
-        var loader = new THREE.ImageLoader( manager );
-        loader.load( 'material.jpg', function ( image ) {
-            texture.image = image;
-            texture.needsUpdate = true;
-        } );
-        var objMat = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: matColor,
-                                                    specular: 0xffffff, shininess: 0,
-                                                    shading: THREE.FlatShading, transparent: isTransparent,
-                                                    opacity: 0.8 } );
-        var loader = new THREE.OBJLoader( manager );
-        loader.load( filename, function ( object ) {
-            object.traverse( function ( child ) {
-                if ( child instanceof THREE.Mesh ) {
-                    child.material = objMat;
-                }
-            } );
-            envModelsGroup.add( object );
-        }, onProgress, onError );
-    }
-
-
-
-    function loadAllModels()
-    {
-        envModelsGroup = new THREE.Group();
-        for(i=0; i<bgModels.length; i++) {
-            loadModel(bgModels[i], bgModelColor[i], bgModelAlpha[i]);
-        }
-        scene.add(envModelsGroup);
-    }
-
-
-    function getDistance(pt1, pt2)
-    {
-        var dX = pt2[0]-pt1[0];
-        var dY = pt2[1]-pt1[1];
-        var dZ = pt2[2]-pt1[2];
-        return (Math.sqrt(Math.abs((dX^2) + (dY^2) + (dZ^2))));
-    }
-
-
-    function getRemappedFromZero(inpVal, srcRange, tgtRange)
-    {
-        return tgtRange * (inpVal/srcRange);
-    }
-
-
-
-    function getPtAlongLine(ptA, ptB, t)
-    {
-        var newPt = [0, 0, 0];
-        newPt[0] = (ptA[0] + ((ptB[0]-ptA[0]) * t));
-        newPt[1] = (ptA[1] + ((ptB[1]-ptA[1]) * t));
-        newPt[2] = (ptA[2] + ((ptB[2]-ptA[2]) * t));
-        return newPt;
-    }
-
-
-
-    // smoothVal controls the smoothness of the rise and fall on the curves
-    function getArchCurveOld(basePt1, basePt2, smoothVal)
-    {
-        var crestMultiplier = 1;
-        var lowerTroughMultiplier = 1;
-        var higherTroughMultiplier = 1;
-
-        var divsA = 6;
-        var incrA = 1.0/divsA;
-
-        var ptsA = [basePt1];
-        for (var i=1; i<divsA; i++)
-        {
-            var midPt = getPtAlongLine(basePt1, basePt2, (incrA * i));
-            // midPt[2] += (getDistance(basePt1, basePt2));
-            ptsA.push(midPt);
-        }
-        ptsA.push(basePt2);
-
-        if (debug) {addPointsToScene(ptsA);}
-        var interpCurve = verb.geom.NurbsCurve.byPoints( ptsA, 2 );
-        return interpCurve;
-    }
-
-
-    // returns a value of 0.5 foldHeightd to power of the value between 0 and 1 domain
-    // creates a smoothing function when iterated between 0 and 1, flattening towards 1
-    // offset is used to constrain the value in global space
-    function getAdjustedValue(inpVal, t, offset=0)
-    {
-        inpVal -= offset;
-        var retVal = (inpVal * (Math.pow(0.5, t)));
-        return retVal + offset;
-    }
-
-
-    function getArchCurve(basePt1, basePt2, smoothVal)
-    {
-        var divsA = 6;
-        var incrA = 1.0/divsA;
-
-        var ptsA = [basePt1];
-        for (var i=1; i<divsA; i++)
-        {
-            var midPt = getPtAlongLine(basePt1, basePt2, (incrA * i));
-            midPt[2] = getAdjustedValue(midPt[2], (incr * (i)), basePt2[2]);
-            ptsA.push(midPt);
-        }
-        ptsA.push(basePt2);
-
-        var interpCurve = verb.geom.NurbsCurve.byPoints( ptsA, 2 );
-        if (debug) {addPointsToScene(ptsA);}
-        if (debug) {addCurveToScene(interpCurve.toThreeGeometry());}
-        return interpCurve;
-    }
-
-
-    function createLoftedSurface(baseCrvPts1, baseCrvPts2)
-    {
-        var interpBaseCrv1 = verb.geom.NurbsCurve.byPoints( baseCrvPts1, 2 );
-        var interpBaseCrv2 = verb.geom.NurbsCurve.byPoints( baseCrvPts2, 2 );
-        if (debug) {addCurveToScene( interpBaseCrv1.toThreeGeometry() );}
-        if (debug) {addCurveToScene( interpBaseCrv2.toThreeGeometry() );}
-        var divs = 6;
-
-        incr = 1.0/divs;
-        surfaceCurves = [];
-        for (i = 0; i <= divs; i++)
-        {
-            ptA = interpBaseCrv1.point(i * incr);
-            ptB = interpBaseCrv2.point(i * incr);
-            var archCurve = getArchCurve(ptA, ptB, (i*incr));
-            surfaceCurves.push(archCurve);
-        }
-
-        var srf = verb.geom.NurbsSurface.byLoftingCurves( surfaceCurves, 3 );
-        return srf;
-    }
-
-
-    function createOrigamiSurface(srf, divisions, foldHeight) {
-        group = new THREE.Group();
-        step = 1/divisions;
-        for(x = 0; x < divisions; x++)
-        {
-            i = x/divisions;
-            
-            for(y = 0; y < divisions-1; y++)
-            {
-                j=y/divisions;
-                
-                if(y%2 == 0)
-                {
-                    if(x%2 == 0)
-                    {
-                        try
-                        {
-                            var a = srf.point(i,j+step);
-                            var b = srf.point(i+step,j);
-                            createPanel([a[0],a[1],a[2]+foldHeight], [b[0],b[1],b[2]+foldHeight], srf.point(i+step,j+step), srf.point(i,j+2*step));
-                        }
-                        catch(err)
-                        {
-                            console.log("error 1");
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var a = srf.point(i,j);
-                            var b = srf.point(i+step,j+step);
-                            createPanel([a[0],a[1],a[2]+foldHeight], [b[0],b[1],b[2]+foldHeight], srf.point(i+step,j+2*step), srf.point(i,j+step));
-                        }
-                        catch(err)
-                        {
-                            console.log("error 2");
-                        }
-                    }
-                }
-                else
-                {
-                    if(x%2 == 0)
-                    {
-                        try
-                        {
-                            var a = srf.point(i+step,j+step);
-                            var b = srf.point(i,j+2*step);
-                            createPanel(srf.point(i,j+step), srf.point(i+step,j), [a[0],a[1],a[2]+foldHeight], [b[0],b[1],b[2]+foldHeight]);
-
-                        }
-                        catch(err)
-                        {
-                            console.log("error 3");
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var a = srf.point(i+step,j+2*step);
-                            var b = srf.point(i,j+step);
-                            createPanel(srf.point(i,j), srf.point(i+step,j+step), [a[0],a[1],a[2]+foldHeight], [b[0],b[1],b[2]+foldHeight]);
-                        }
-                        catch(err)
-                        {
-                            console.log("error 4");
-                        }
-                    }
-                }
+            if (row+1 < controlPointsArray[col].length) {
+                debugLinesGroup.add(getLine(controlPointsArray[col][row].getMesh().position,
+                   controlPointsArray[col][row+1].getMesh().position,
+                   0x0000ff));
             }
         }
-        return group;
     }
-
-
-    function roundHalf(num)
-    {
-        return Math.round(num*2)/2;
-    }
-
-
-    function getMaterial(gap, limit)
-    {
-        var maxColor = 0xff;
-        var dynColor = 0xffffff;
-        // round to nearest 0.5 and remap it from given 0 to limit range to 0 to 256 range
-        var rVal = Math.round(getRemappedFromZero(roundHalf(gap), limit, maxColor));
-        // cap max values at maxColor
-        if (rVal > maxColor) rVal = maxColor;
-        // invert the color, to make black max and red min
-        rVal = 0xff - rVal;
-        // bitshifts to generate color in desired spectrum i.e (R-shift left 16, G-shift left 8, B-no shift) with 'OR' oper
-        dynColor = ((dynColor) & ((rVal) << 16));
-        // var material = new THREE.MeshLambertMaterial( { side: THREE.DoubleSide, color: dynColor, shading: THREE.SmoothShading } );
-        // var material = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: dynColor, specular: 0x000000, shininess: 10, shading: THREE.FlatShading } );
-        var material = new THREE.MeshBasicMaterial( { side: THREE.DoubleSide, color: dynColor, shading: THREE.FlatShading } );
-        return material;
-    }
+    scene.add(debugLinesGroup);
+}
 
 
 
-    function addEdge(pt1, pt2)
-    {
-        var lineGeom = new THREE.Geometry();
-        lineGeom.vertices.push(new THREE.Vector3(pt1[0], pt1[1], pt1[2]));
-        lineGeom.vertices.push(new THREE.Vector3(pt2[0], pt2[1], pt2[2]));
-        var line = new THREE.Line(lineGeom, lineMaterial);
-        group.add(line);
-        lineGeom.vertices.push(new THREE.Vector3(pt2[0], pt2[1], pt2[2]));
-        lineGeom.vertices.push(new THREE.Vector3(pt1[0], pt1[1], pt1[2]));
-        var line = new THREE.Line(lineGeom, lineMaterial);
-        group.add(line);
-    }
+//---------------------------------------------------------
 
 
-    
-    // creates a plane between 4 given points, by creating the diagonal planes
-    // pts to be given in clockwise order
-    function createPanel(pt1, pt2, pt3, pt4)
-    {
-        var gap1 = getDistance(pt1, pt3);
-        var gap2 = getDistance(pt2, pt4);
-        var gap = (gap1+gap2)/2;
 
-        var mid1 = getPtAlongLine(pt1, pt3, 0.5);
-        var mid2 = getPtAlongLine(pt2, pt4, 0.5);
-        var midLine = verb.geom.NurbsCurve.byPoints( [mid1, mid2], 1 );
-        if (debug) {addCurveToScene( midLine.toThreeGeometry() );}
+function setupDebug() {
+    if(debug) addOrigin();
+    if(debug) addDebugPointsGroup();
+    if(debug) addDebugLinesGroup();
+}
 
 
-        // var panelMaterial = new THREE.MeshBasicMaterial( { color: panelColor } );
-        if (analyzeSurface)
-        {
-            activePanelMaterial = getMaterial(gap, 4);
+
+function updateDebug() {
+    if (!debug) return;
+    removeDebugPointsGroup();
+    removeDebugLinesGroup();
+    addDebugPointsGroup();
+    addDebugLinesGroup();
+}
+
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+
+
+var controlPointsArray = [];
+
+
+
+function clearPointsArray() {
+    for (var col=0; col<zCount; col++) {
+        for (var row=0; row<xCount; row++) {
+            delete controlPointsArray[row][col];
         }
-        else
-        {
-            activePanelMaterial = panelMaterial;
-        }
-
-        var planeGeometry = new THREE.Geometry();
-        planeGeometry.vertices.push(new THREE.Vector3(pt1[0], pt1[1], pt1[2]));
-        planeGeometry.vertices.push(new THREE.Vector3(pt2[0], pt2[1], pt2[2]));
-        planeGeometry.vertices.push(new THREE.Vector3(pt3[0], pt3[1], pt3[2]));
-        var face = new THREE.Face3( 0, 1, 2 );
-        planeGeometry.faces.push( face );
-        var meshToAdd1 = new THREE.Mesh( planeGeometry, activePanelMaterial );
-        
-        var planeGeometry = new THREE.Geometry();
-        planeGeometry.vertices.push(new THREE.Vector3(pt3[0], pt3[1], pt3[2]));
-        planeGeometry.vertices.push(new THREE.Vector3(pt4[0], pt4[1], pt4[2]));
-        planeGeometry.vertices.push(new THREE.Vector3(pt1[0], pt1[1], pt1[2]));
-        var face = new THREE.Face3( 0, 1, 2 );
-        planeGeometry.faces.push( face );
-        var meshToAdd2 = new THREE.Mesh( planeGeometry, activePanelMaterial );
-
-        if (seeEdges)
-        {
-            addEdge(pt1, pt2);
-            addEdge(pt3, pt4);
-            addEdge(pt1, pt4);
-            addEdge(pt2, pt3);
-        }
-        
-        group.add(meshToAdd1);
-        group.add(meshToAdd2);
     }
+    controlPointsArray = [];
+}
 
 
-    function renderScene(){
-        var controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.target.set( width/2, breadth/2, 25 );
 
-        function render() {
+function setupPointsArray() {
+    for (var col=0; col<zCount; col++) {
+        var rowArray = [];
+        for (var row=0; row<xCount; row++) {
+            var cp = new ControlPoint(row, col, xSpacing, zSpacing);
+            rowArray.push(cp);
+        }
+        controlPointsArray.push(rowArray);
+    }
+}
 
-            if (useRaycaster){
 
-                // update the picking ray with the camera and mouse position
-                raycaster.setFromCamera( mouse, camera );
 
-                // clear color
-                for ( var i = 0; i < intersects.length; i++ ) {
-                    if (!intersects[ i ].object.material.color) continue;
-                    intersects[ i ].object.material.color.set( 0xffffff );
-                }
+function repositionPointsArray() {
+    for (var row=0; row<zCount; row++) {
+        for (var col=0; col<xCount; col++) {
+            var cp = controlPointsArray[row][col];
+            cp.getMesh().position.set(col * xSpacing, 0, row * zSpacing);
+        }
+    }
+}
 
-                // calculate objects intersecting the picking ray
-                intersects = raycaster.intersectObjects( scene.children );
 
-                for ( var i = 0; i < intersects.length; i++ ) {
-                    if (!intersects[ i ].object.material.color) continue;
-                    intersects[ i ].object.material.color.set( 0xff0000 );
-                }
+
+//-----------------------------------------------------------------------------
+
+
+
+var foldPointsArray = [];
+
+
+
+function clearFoldPointsArray() {
+    for (var col=0; col<foldPointsArray.length; col++) {
+        for (var row=0; row<foldPointsArray[col].length; row++) {
+            delete foldPointsArray[row][col];
+        }
+    }
+    foldPointsArray = [];
+}
+
+
+
+function setupFoldPointsArray() {
+    for (var row=0; row<controlPointsArray.length-1; row++) {
+        var rowArray = [];
+        for (var col=0; col<controlPointsArray[col].length; col++) {
+            var fp = new FoldPoint(controlPointsArray[row][col], controlPointsArray[row+1][col], 0.6);
+            rowArray.push(fp);
+        }
+        foldPointsArray.push(rowArray);
+    }
+}
+
+
+
+function repositionFoldPoint() {
+    for (var row=0; row<foldPointsArray.length; row++) {
+        for (var col=0; col<foldPointsArray[row].length; col++) {
+            foldPointsArray[row][col].reposition();
+        }
+    }
+}
+
+
+
+function updateFoldPointsArray() {
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+function updateFrame() {
+    repositionPointsArray();
+    repositionFoldPoint();
+    updateDebug();
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+var xCount = 3;
+var zCount = 5;
+var xSpacing = 6;
+var zSpacing = 3;
+var changeAmt = 0.2;
+
+
+function reduceXSpacing() {
+    xSpacing -= changeAmt;
+    updateFrame();
+}
+
+
+function increaseXSpacing() {
+    xSpacing += changeAmt;
+    updateFrame();
+}
+
+
+function reduceZSpacing() {
+    zSpacing -= changeAmt;
+    updateFrame();
+}
+
+
+function increaseZSpacing() {
+    zSpacing += changeAmt;
+    updateFrame();
+}
+
+
+
+function pavilionRun(){
+    setupPointsArray();
+    setupFoldPointsArray();
+    setupDebug();
+
+
+    window.addEventListener( 'keyup', function( event ) {
+        switch ( event.keyCode ) {
+            // Q
+            case 81: {
+                reduceXSpacing();
+                break;
             }
-
-            requestAnimationFrame( render );
-            renderer.render( scene, camera );
+            // W
+            case 87: {
+                increaseXSpacing();
+                break;
+            }
+            // A
+            case 65: {
+                reduceZSpacing();
+                break;
+            }
+            // S
+            case 83: {
+                increaseZSpacing();
+                break;
+            }
         }
-        render();
-    }
+    });
+}
 
 
 
-    init();
-    renderScene();
+//-----------------------------------------------------------------------------
 
 
 
-    function getOrigamiModel()
-    {
-        scene.remove(envModelsGroup);
-        var exporter = new THREE.OBJExporter();
-        var result = exporter.parse( scene );
-        scene.add(envModelsGroup);
-        return result;
-    }
+// called after every frame;
+frameUpdate = function() {
+}
 
 
 
+//-----------------------------------------------------------------------------
 
-    function downloadModel()
-    {
-        var modelData = getOrigamiModel();
-        var fileName = "LERAPlusOrigamiPavilion_" + new Date().getTime() + ".obj";
-        var file = new File([modelData], fileName, {type: "text/plain"});
-        saveAs(file);
-    }
+
 
 
 
