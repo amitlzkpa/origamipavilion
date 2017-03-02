@@ -30,10 +30,28 @@ function getIntermediateVector3(pt1, pt2, offset) {
 
 
 function getBisectionVector3(dist1, dist2, pt1, pt2) {
-    return new THREE.Vector3(calcInterp(pt1.x, pt2.x, offset),
-                             calcInterp(pt1.y, pt2.y, offset),
-                             calcInterp(pt1.z, pt2.z, offset));
+    var totalD = dist1 + dist2;
+    var d = pt1.distanceTo(pt2);
+    var diff = totalD-d;
+    var newX = calcInterp(pt1.x, pt2.x, 0.5);
+    var newY = diff/totalD;
+    var newZ = calcInterp(pt1.z, pt2.z, 0.5);
+    return new THREE.Vector3(newX, newY, newZ);
 }
+
+
+// function getBisectionVector3(dist1, dist2, pt1, pt2) {
+//     var d = pt1.distanceTo(pt2);
+//     var a = ((dist1^2) - (dist2^2) + (d^2)) / (2 * d);
+//     var h = Math.sqrt((dist1^2) - (a^2));
+//     var pt3 = pt2.sub(pt1);
+//     pt3 = (pt3.addScalar(a/d)).add(pt1);
+//     var iPt1 = new THREE.Vector3();
+//     var iPt2 = new THREE.Vector3();
+//     iPt1.x = pt3.x + h*(pt2.y - pt1.y)/d;
+//     iPt1.y = pt3.y - h*(pt2.x - pt1.x)/d;
+//     return iPt1;
+// }
 
 
 
