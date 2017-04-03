@@ -105,3 +105,10 @@ footer.page-footer {
   text-align: center;
   display: inline-block;
 }
+
+
+
+/* quick fix for datGUI field sizing */
+.dg .cr.number input[type=text] {
+  height: 12px !important;
+}
