@@ -1,3 +1,6 @@
+[submodule "lporigami/static/js/ThreeJSBoilerplate"]
+	path = lporigami/static/js/ThreeJSBoilerplate
+	url = https://github.com/jeromeetienne/threejsboilerplate.git
 [submodule "lporigami/static/js/FileSaver"]
 	path = lporigami/static/js/FileSaver
 	url = https://github.com/eligrey/FileSaver.js.git
