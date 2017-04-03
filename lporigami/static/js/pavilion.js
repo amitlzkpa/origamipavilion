@@ -48,7 +48,6 @@
         var customContainer = document.getElementById('datGUI');
         customContainer.appendChild(datGUI.domElement);
         var widthController = datGUI.add(guiControls, 'width', 70, 120);
-        console.log(widthController);
         var heightController = datGUI.add(guiControls, 'height', 1, 1.5).step(0.05);
         var breadthController = datGUI.add(guiControls, 'breadth', 70, 120);
         var pinchController = datGUI.add(guiControls, 'pinch', 0, 30);
