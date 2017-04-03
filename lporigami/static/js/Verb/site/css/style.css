@@ -1,0 +1,91 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  margin: 0 auto;
+  background: black;
+}
+
+#title-box {
+    background: #DD5500;
+    text-align: right;
+}
+
+#title-box .inner-box {
+    padding-top: 0px;
+}
+
+#title-box h1 {
+    padding: none;
+    margin: none;
+    font-size: 60px;
+}
+
+#source-box {
+    background: #B10064;
+}
+
+#docs-box {
+    background: #008E6E;
+}
+
+#download-box {
+    background: #89CE00;
+}
+
+.box {
+    position: relative;
+    flex-grow: 1;
+    overflow: hidden;
+    color: white;
+    height: 300px;
+    width: 300px;
+    text-shadow: 0px 1px #000000;
+}
+
+.box h1 {
+    font-size: 40px;
+}
+
+.box a {
+    color: white;
+    text-decoration: none;
+}
+
+.inner-box {
+    padding: 30px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.link-box:hover {
+    background: #222 !important;
+}
+
+.examples {
+    background-color: black;
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.box img {
+    position: absolute;
+    width: 100%;
+}
+
+.picture-box {
+    font-size: 28px;
+    z-index: 2;
+    position: absolute;
+    padding: 30px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(20,20,20,0.8);
+    opacity: 0;
+}
+
+.picture-box:hover {
+    opacity: 1.0;
+}

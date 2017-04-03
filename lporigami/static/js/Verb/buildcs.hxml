@@ -1,0 +1,6 @@
+-lib promhx
+-main verb.Verb
+-cp src
+-cs build/cs
+-dce std
+-D dll

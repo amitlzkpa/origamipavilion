@@ -1,0 +1,14 @@
+Documentation generation - docco no longer works, always sucked anyways
+Update website
+
+Split
+    Holes are not recognized
+
+SweptSurface
+More efficient representation for surface tessellation, don't use 2d arrays
+More exact srf-srf intersection
+Marching surface-Surface intersection
+SurfaceClosestPoint occasionally fails when point is far from surface - need to check for wild derivatives
+Curve interpolation with sparse matrices
+Curve approximation
+verb.eval.Make.interpCurve with tangents is numerically unstable, implementation likely wrong
