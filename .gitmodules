@@ -4,6 +4,3 @@
 [submodule "lporigami/static/js/FileSaver"]
 	path = lporigami/static/js/FileSaver
 	url = https://github.com/eligrey/FileSaver.js.git
-[submodule "lporigami/static/js/Physijs"]
-	path = lporigami/static/js/Physijs
-	url = https://github.com/chandlerprall/Physijs.git
