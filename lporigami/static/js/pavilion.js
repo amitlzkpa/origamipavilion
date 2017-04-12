@@ -367,6 +367,30 @@ function updateFoldPointsArray() {
 
 
 
+var meshGroup;
+
+
+
+function setupMesh() {
+    meshGroup = new THREE.Group();
+    scene.add(meshGroup);
+}
+
+
+
+function updateMesh() {
+    for (var row=0; row<controlPointsArray.length-1; row++) {
+        for (var col=0; col<controlPointsArray[col].length; col++) {
+        }
+    }
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
 function updateFrame() {
     repositionPointsArray();
     repositionFoldPoint();
