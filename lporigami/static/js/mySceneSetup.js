@@ -37,13 +37,13 @@ function setupScene(doUseRaycaster){
 
     viewerele.appendChild( renderer.domElement );
 
-    var ambientLight = new THREE.AmbientLight( 0xbbbbbb );
+    var ambientLight = new THREE.AmbientLight( 0xFFFAFA );
     scene.add( ambientLight );
 
     var lights = [];
-    lights[0] = new THREE.PointLight( 0xececec, 0.25, 0 );
-    lights[1] = new THREE.PointLight( 0xececec, 0.25, 0 );
-    lights[2] = new THREE.PointLight( 0xececec, 0.25, 0 );
+    lights[0] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
+    lights[1] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
+    lights[2] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
 
     lights[0].position.set( 0, 100, 0 );
     lights[1].position.set( 100, 200, 100 );
