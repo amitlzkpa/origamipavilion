@@ -25,7 +25,8 @@ function setupScene(doUseRaycaster){
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    // camera = new THREE.OrthographicCamera( -window.innerWidth/2, window.innerWidth/2, -window.innerHeight/2, window.innerHeight/2, 0.1, 1000 );
 
     camera.up.set( 0, 0, 1 );
 
@@ -51,6 +52,11 @@ function setupScene(doUseRaycaster){
     scene.add( lights[0] );
     scene.add( lights[1] );
     scene.add( lights[2] );
+
+    var geometry = new THREE.PlaneGeometry( 5000, 5000, 1 );
+    var material = new THREE.MeshBasicMaterial( {color: 0xe0e0e0, side: THREE.DoubleSide} );
+    var plane = new THREE.Mesh( geometry, material );
+    scene.add( plane );
 }
 
 var intersects = [];

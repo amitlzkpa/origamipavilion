@@ -93,7 +93,7 @@
         setupScene();
         renderer.setClearColor (0xffffff, 1);
         // make the control and camera look at the centre of the origami model
-        camera.position.set( 75, -28, 12 );
+        camera.position.set( -120, -100, 60 );
         camera.lookAt(new THREE.Vector3( width/2, breadth/2, 25 ));
         loadAllModels();
         loadOrigamiModel();
