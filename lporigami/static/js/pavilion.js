@@ -18,7 +18,7 @@
     pinch = 30;
     analyzeSurface = false;
     seeEdges = true;
-    panelColor = 0xff0000;
+    panelColor = 0xD3D3D3;
     var origamiGroup;
     var envModelsGroup;
     var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 4});
@@ -383,7 +383,7 @@
 
     function getMaterial(gap, limit)
     {
-        var maxColor = 0xff;
+        var maxColor = 0x00ff00;
         var dynColor = 0xffffff;
         // round to nearest 0.5 and remap it from given 0 to limit range to 0 to 256 range
         var rVal = Math.round(getRemappedFromZero(roundHalf(gap), limit, maxColor));
