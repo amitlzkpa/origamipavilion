@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>Origami Pavilion - Lera Plus</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+
+  <!-- <script src="{% static 'js/Verb/build/js/verb.js' %}"></script> -->
+  <script src="{% static 'js/ThreeJS/build/three.min.js' %}"></script>
+  <!-- <script src="{% static 'js/Verb/examples/js/verbToThreeConversion.js' %}"></script> -->
+  <!-- <script src="{% static 'js/Verb/examples/js/codemirror.js' %}"></script> -->
+  <!-- <script src="{% static 'js/Verb/examples/js/javascript.js' %}"></script> -->
+  <script src="{% static 'js/mySceneSetup.js' %}"></script>
+  <script src="{% static 'js/OrbitControls.js' %}"></script>
+  <!-- <script src="{% static 'js/ThreeJS/examples/js/libs/dat.gui.min.js' %}"></script> -->
+  <!-- <script src="{% static 'js/ThreeJS/examples/js/loaders/OBJLoader.js' %}"></script> -->
+  <!-- <script src="{% static 'js/ThreeJS/examples/js/exporters/OBJExporter.js' %}"></script> -->
+  <!-- <script src="{% static 'js/FileSaver/FileSaver.min.js' %}"></script> -->
+
+
+  <!-- <script src="{% static 'js/modelSetup.js' %}"></script> -->
+</head>
+
+
+
+
+
+
+
+
+
+
+<body>
+
+
+  <div id="credits" class="modal modal-fixed-footer">
+    <div class="modal-content">
+
+      <h4>Credits</h4>
+      <ul>
+
+        <li></li>
+
+        <li>
+          <h5>Team</h5>
+          <ul>
+            <li><a target="_blank" href="http://www.leraplus.com/#!about/cxas">Alfonso Oliva</a></li>
+            <li><a target="_blank" href="http://www.leraplus.com/#!about/cxas">Amit Nambiar</a></li>
+            <li><a target="_blank" href="http://www.leraplus.com/#!about/cxas">Nidhi Sekhar</a></li>
+          </ul>
+        </li>
+
+        <li></li>
+
+        <li>
+          <h5>Libraries</h5>
+          <ul>
+            <li><a target="_blank" href="http://threejs.org/">Three JS</a></li>
+            <li><a target="_blank" href="http://verbnurbs.com/">Verb Nurbs</a></li>
+            <li><a target="_blank" href="http://github.com/eligrey/FileSaver.js">FileSaver</a></li>
+            <li><a target="_blank" href="http://materializecss.com/">Materialize CSS</a></li>
+            <li><a target="_blank" href="https://www.djangoproject.com/">Django</a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-dark btn-flat ">Close</a>
+    </div>
+  </div>
+
+
+
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper black">
+        <div class="container">
+          <a href="http://www.leraplus.com" class="brand-logo">
+            <span id="LERA-text">LERA</span>
+            <span id="PLUS-text">PLUS</span>
+          </a>
+          <a href="#!" id="origami-text" class="brand-logo center">ORIGAMI</a>
+          
+          <ul class="right hide-on-med-and-down">
+            <li><a href="#credits" class="waves-effect waves-light btn-flat grey-text modal-trigger">CREDITS</a></li>
+            <li><a href="#" onclick="javascript:downloadModel()" class="waves-effect waves-light btn-flat grey-text">Download</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div id="viewer" class="col s12 m12 l12">
+    <div id="datGUI"></div>
+  </div>
+
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  <script src="{% static 'js/test.js' %}"></script>
+  <script type="text/javascript">
+      $(document).ready(function(){
+        $('.modal-trigger').leanModal();
+      });
+  </script>
+  </body>
+</html>

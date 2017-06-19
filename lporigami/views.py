@@ -5,3 +5,7 @@ from django.shortcuts import render
 
 def play(request):
     return render(request, 'lporigami/play.html', {})
+
+
+def test(request):
+    return render(request, 'lporigami/test.html', {})

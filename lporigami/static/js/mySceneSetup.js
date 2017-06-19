@@ -40,22 +40,11 @@ function setupScene(doUseRaycaster){
     var ambientLight = new THREE.AmbientLight( 0xFFFAFA );
     scene.add( ambientLight );
 
-    var lights = [];
-    lights[0] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-    lights[1] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-    lights[2] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-
-    lights[0].position.set( 0, 100, 0 );
-    lights[1].position.set( 100, 200, 100 );
-    lights[2].position.set( -100, -200, -100 );
-
-    scene.add( lights[0] );
-    scene.add( lights[1] );
-    scene.add( lights[2] );
-
     var geometry = new THREE.PlaneGeometry( 5000, 5000, 1 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xe0e0e0, side: THREE.DoubleSide} );
+    var material = new THREE.MeshPhongMaterial( { color: 0xe0e0e0, side: THREE.DoubleSide, dithering: true } );
     var plane = new THREE.Mesh( geometry, material );
+    plane.receiveShadow = true;
+    plane.castShadow = false;
     scene.add( plane );
 }
 
@@ -103,15 +92,6 @@ function addLineToScene(pts, mat){
 function addMeshToScene(mesh, material, wireframe ){
     material = material || new THREE.MeshNormalMaterial( { side: THREE.DoubleSide, wireframe: false, shading: THREE.SmoothShading, transparent: true, opacity: 0.4 } )
 
-//    new THREE.MeshPhongMaterial({
-//                               specular: '#ffffff',
-//                               color: '#8e8e8e',
-//                               side: THREE.DoubleSide,
-//                               ambient: '#ffffff',
-//                               emissive: '#111111',
-//                               shininess: 40
-//                             });
-
     scene.add( new THREE.Mesh( mesh, material ) );
 
     if (wireframe){
@@ -152,5 +132,29 @@ function addPointsToScene(pts){
     var cloud2 = new THREE.PointCloud( geom, cloudMat2 );
 
     scene.add( cloud2 );
+}
+
+
+
+
+
+
+function add3PointLights() {
+    var lights = [];
+    lights[0] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
+    lights[1] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
+    lights[2] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
+
+    lights[0].castShadow = true;
+    lights[1].castShadow = true;
+    lights[2].castShadow = true;
+
+    lights[0].position.set( 0, 100, 0 );
+    lights[1].position.set( 100, 200, 100 );
+    lights[2].position.set( -100, -200, -100 );
+
+    scene.add( lights[0] );
+    scene.add( lights[1] );
+    scene.add( lights[2] );
 }
 

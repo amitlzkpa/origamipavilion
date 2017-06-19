@@ -22,7 +22,7 @@
     var origamiGroup;
     var envModelsGroup;
     var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 4});
-    var panelMaterial = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: panelColor, specular: 0x00ff00, shininess: 20, shading: THREE.FlatShading } );
+    var panelMaterial = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: panelColor, specular: 0x00ff00, shininess: 0, shading: THREE.FlatShading } );
     var activePanelMaterial;
 
 
@@ -89,16 +89,44 @@
 
     function init()
     {
-        // verb.exe.WorkerPool.basePath = "verb-master/build/js/";
         setupScene();
-        renderer.setClearColor (0xffffff, 1);
-        // make the control and camera look at the centre of the origami model
-        camera.position.set( -120, -100, 60 );
-        camera.lookAt(new THREE.Vector3( width/2, breadth/2, 25 ));
+        overrideDefaultSceneSetup();
         loadAllModels();
         loadOrigamiModel();
         setupControllers();
     }
+
+
+
+
+    function overrideDefaultSceneSetup() {
+        var focusPt = new THREE.Vector3( width/2, breadth/2, 25 );
+
+        renderer.setClearColor (0xe0e0e0, 1);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.gammaInput = true;
+        renderer.gammaOutput = true;
+        camera.position.set( -120, -100, 60 );
+        camera.lookAt(focusPt);
+
+
+
+        var spotLight = new THREE.SpotLight( 0xffffff, 1 );
+        spotLight.position.set( -85, -30, 165 );
+        spotLight.castShadow = true;
+        spotLight.penumbra = 0.85;
+        spotLight.decay = 2;
+        spotLight.distance = 400;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.near = 1;
+        spotLight.shadow.camera.far = 200;
+        scene.add(spotLight);
+        // lightHelper = new THREE.SpotLightHelper( spotLight );
+        // scene.add(lightHelper);
+    }
+
 
 
 
@@ -395,7 +423,7 @@
         dynColor = ((dynColor) & ((rVal) << 16));
         // var material = new THREE.MeshLambertMaterial( { side: THREE.DoubleSide, color: dynColor, shading: THREE.SmoothShading } );
         // var material = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: dynColor, specular: 0x000000, shininess: 10, shading: THREE.FlatShading } );
-        var material = new THREE.MeshBasicMaterial( { side: THREE.DoubleSide, color: dynColor, shading: THREE.FlatShading } );
+        var material = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: dynColor, specular: 0xffffff, shininess: 0, shading: THREE.FlatShading } );
         return material;
     }
 
@@ -447,6 +475,8 @@
         var face = new THREE.Face3( 0, 1, 2 );
         planeGeometry.faces.push( face );
         var meshToAdd1 = new THREE.Mesh( planeGeometry, activePanelMaterial );
+        meshToAdd1.receiveShadow = true;
+        meshToAdd1.castShadow = true;
         
         var planeGeometry = new THREE.Geometry();
         planeGeometry.vertices.push(new THREE.Vector3(pt3[0], pt3[1], pt3[2]));
@@ -455,6 +485,8 @@
         var face = new THREE.Face3( 0, 1, 2 );
         planeGeometry.faces.push( face );
         var meshToAdd2 = new THREE.Mesh( planeGeometry, activePanelMaterial );
+        meshToAdd2.receiveShadow = true;
+        meshToAdd2.castShadow = true;
 
         if (seeEdges)
         {
