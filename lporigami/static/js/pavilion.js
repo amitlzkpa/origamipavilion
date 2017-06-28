@@ -224,7 +224,7 @@
           generations : 4,        // # for branch' hierarchy
           length      : 4.0,      // length of root branch
           uvLength    : 16.0,     // uv.v ratio against geometry length (recommended is generations * length)
-          radius      : 0.1,      // radius of root branch
+          radius      : 0.08,      // radius of root branch
           radiusSegments : 8,     // # of radius segments for each branch geometry
           heightSegments : 3      // # of height segments for each branch geometry
         });

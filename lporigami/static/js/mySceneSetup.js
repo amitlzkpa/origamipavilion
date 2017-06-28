@@ -137,24 +137,3 @@ function addPointsToScene(pts){
 
 
 
-
-
-function add3PointLights() {
-    var lights = [];
-    lights[0] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-    lights[1] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-    lights[2] = new THREE.PointLight( 0xFFFAFA, 0.25, 0 );
-
-    lights[0].castShadow = true;
-    lights[1].castShadow = true;
-    lights[2].castShadow = true;
-
-    lights[0].position.set( 0, 100, 0 );
-    lights[1].position.set( 100, 200, 100 );
-    lights[2].position.set( -100, -200, -100 );
-
-    scene.add( lights[0] );
-    scene.add( lights[1] );
-    scene.add( lights[2] );
-}
-
