@@ -233,7 +233,7 @@
 
         var treeMesh = new THREE.Mesh(
             treeGeometry, 
-            new THREE.MeshBasicMaterial( { color: 0x222222, side: THREE.DoubleSide } ) // set any material
+            new THREE.MeshBasicMaterial( { color: 0x222222 } )
         );
         treeMesh.castShadow = true;
 
