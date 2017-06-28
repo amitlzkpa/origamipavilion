@@ -25,13 +25,30 @@
   <script src="{% static 'js/ThreeJS/examples/js/loaders/OBJLoader.js' %}"></script>
   <script src="{% static 'js/ThreeJS/examples/js/exporters/OBJExporter.js' %}"></script>
   <script src="{% static 'js/FileSaver/FileSaver.min.js' %}"></script>
+  <script src="{% static 'js/THREE.Tree/Tree.js' %}"></script>
+  <script src="{% static 'js/THREE.Tree/TreeGeometry.js' %}"></script>
 
 
   <script src="{% static 'js/modelSetup.js' %}"></script>
   <script type="text/javascript">
     setupBackgroundModelFiles(["{% static 'files/humans.obj' %}",        0x606060, false]);
-    setupBackgroundModelFiles(["{% static 'files/trees.obj' %}",         0x808080, true]);
     setupBackgroundModelFiles(["{% static 'files/base.obj' %}",         0xe0e0e0, false]);
+
+    addTreeAtPosition([   -27,      43,      0 ]);
+    addTreeAtPosition([   17,       -70,      0 ]);
+    addTreeAtPosition([   -67,      17,       0 ]);
+    addTreeAtPosition([   -24,      74,      0 ]);
+    addTreeAtPosition([   4,       103,      0 ]);
+    addTreeAtPosition([   70,      126,       0 ]);
+    addTreeAtPosition([   176,      98,      0 ]);
+    addTreeAtPosition([   106,      3,      0 ]);
+    addTreeAtPosition([   146,      43,      0 ]);
+    addTreeAtPosition([   172,      -27,       0 ]);
+    addTreeAtPosition([   4,      143,      0 ]);
+    addTreeAtPosition([   -42,       170,      0 ]);
+    addTreeAtPosition([   -72,       84,      0 ]);
+    addTreeAtPosition([   207,      157,       0 ]);
+    addTreeAtPosition([   104,      202,       0 ]);
   </script>
 </head>
 
@@ -135,5 +152,9 @@
         $('.modal-trigger').leanModal();
       });
   </script>
+
+
+
+
   </body>
 </html>

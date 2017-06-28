@@ -14,3 +14,10 @@ function setupBackgroundModelFiles(configArray)
 }
 
 
+
+
+var treePositions = [];
+function addTreeAtPosition(pos)
+{
+	treePositions.push(new THREE.Vector3(pos[0], pos[1], pos[2]));
+}

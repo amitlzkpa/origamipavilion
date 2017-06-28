@@ -92,6 +92,7 @@
         setupScene();
         overrideDefaultSceneSetup();
         loadAllModels();
+        loadTrees();
         loadOrigamiModel();
         setupControllers();
     }
@@ -113,11 +114,12 @@
 
 
         var spotLight = new THREE.SpotLight( 0xffffff, 1 );
-        spotLight.position.set( -85, -30, 165 );
+        spotLight.position.set( -85, -30, 465 );
+        spotLight.rotation.x = Math.PI / 3;
         spotLight.castShadow = true;
         spotLight.penumbra = 0.85;
         spotLight.decay = 2;
-        spotLight.distance = 400;
+        spotLight.distance = 800;
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
         spotLight.shadow.camera.near = 1;
@@ -188,11 +190,6 @@
         };
         var onError = function ( xhr ) {
         };
-        var loader = new THREE.ImageLoader( manager );
-        loader.load( 'material.jpg', function ( image ) {
-            texture.image = image;
-            texture.needsUpdate = true;
-        } );
         var objMat = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide, color: matColor,
                                                     specular: 0xffffff, shininess: 0,
                                                     shading: THREE.FlatShading, transparent: isTransparent,
@@ -220,6 +217,43 @@
     }
 
 
+
+
+    function addTree(position, scale) {
+        var tree = new THREE.Tree({
+          generations : 4,        // # for branch' hierarchy
+          length      : 4.0,      // length of root branch
+          uvLength    : 16.0,     // uv.v ratio against geometry length (recommended is generations * length)
+          radius      : 0.1,      // radius of root branch
+          radiusSegments : 8,     // # of radius segments for each branch geometry
+          heightSegments : 8      // # of height segments for each branch geometry
+        });
+
+        var treeGeometry = THREE.TreeGeometry.build(tree);
+
+        var treeMesh = new THREE.Mesh(
+            treeGeometry, 
+            new THREE.MeshBasicMaterial( { color: 0x222222, side: THREE.DoubleSide } ) // set any material
+        );
+        treeMesh.castShadow = true;
+
+        treeMesh.rotation.x = Math.PI / 2;
+        treeMesh.position.set(position.x, position.y, position.z);
+        treeMesh.scale.set(scale, scale, scale);
+
+        scene.add(treeMesh);
+    }
+
+
+    function loadTrees() {
+        for(var i=0; i < treePositions.length; i++) {
+            addTree(treePositions[i], getRandomInRange(4, 6));
+        }
+    }
+
+
+
+
     function getDistance(pt1, pt2)
     {
         var dX = pt2[0]-pt1[0];
@@ -234,6 +268,11 @@
         return tgtRange * (inpVal/srcRange);
     }
 
+
+    function getRandomInRange(min,max)
+    {
+        return Math.random()*(max-min+1)+min;
+    }
 
 
     function getPtAlongLine(ptA, ptB, t)
