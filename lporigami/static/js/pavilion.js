@@ -226,7 +226,7 @@
           uvLength    : 16.0,     // uv.v ratio against geometry length (recommended is generations * length)
           radius      : 0.1,      // radius of root branch
           radiusSegments : 8,     // # of radius segments for each branch geometry
-          heightSegments : 8      // # of height segments for each branch geometry
+          heightSegments : 3      // # of height segments for each branch geometry
         });
 
         var treeGeometry = THREE.TreeGeometry.build(tree);
