@@ -113,20 +113,24 @@
 
 
 
-        var spotLight = new THREE.SpotLight( 0xffffff, 1 );
-        spotLight.position.set( -85, -30, 465 );
-        spotLight.rotation.x = Math.PI / 3;
+        var spotLight = new THREE.SpotLight( 0xffffff, 1.5 );
+        spotLight.position.set( 0, 0, 465 );
+        spotLight.target.position.set( 60, 60, 0 );
+        spotLight.angle = Math.PI / 3;
         spotLight.castShadow = true;
-        spotLight.penumbra = 0.85;
+        spotLight.penumbra = 0.05;
         spotLight.decay = 2;
         spotLight.distance = 800;
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
-        spotLight.shadow.camera.near = 1;
-        spotLight.shadow.camera.far = 200;
+        spotLight.shadow.camera.near = 50;
+        spotLight.shadow.camera.far = 800;
         scene.add(spotLight);
+        scene.add(spotLight.target);
         // lightHelper = new THREE.SpotLightHelper( spotLight );
         // scene.add(lightHelper);
+        // shadowCameraHelper = new THREE.CameraHelper( spotLight.shadow.camera );
+        // scene.add( shadowCameraHelper );
     }
 
 
@@ -198,6 +202,7 @@
         loader.load( filename, function ( object ) {
             object.traverse( function ( child ) {
                 if ( child instanceof THREE.Mesh ) {
+                    child.castShadow = true;
                     child.material = objMat;
                 }
             } );
